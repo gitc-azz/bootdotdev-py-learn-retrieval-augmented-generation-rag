@@ -2,6 +2,14 @@ import json
 import string
 
 
+def load_and_preprocess(file_path: str) -> list[str]:
+    with open(file_path, "r") as file:
+        return file.read().splitlines()
+
+
+STOP_WORDS: list[str] = load_and_preprocess("./data/stopwords.txt")
+
+
 def is_match(pattern: list[str], data: list[str]) -> bool:
     for p in pattern:
         for d in data:
@@ -28,10 +36,20 @@ def tokenized(s: str) -> list[str]:
     return ret
 
 
+def without_stopwords(tokens: list[str]) -> list[str]:
+    ret = []
+    for t in tokens:
+        if t in STOP_WORDS:
+            continue
+        ret.append(t)
+    return ret
+
+
 def preprocess_text(s: str) -> list[str]:
     ret = s.lower()
     ret = without_punctuation(ret)
     ret = tokenized(ret)
+    ret = without_stopwords(ret)
     return ret
 
 
