@@ -1,6 +1,8 @@
 import json
 import string
 
+from nltk.stem import PorterStemmer
+
 
 def load_and_preprocess(file_path: str) -> list[str]:
     with open(file_path, "r") as file:
@@ -8,6 +10,7 @@ def load_and_preprocess(file_path: str) -> list[str]:
 
 
 STOP_WORDS: list[str] = load_and_preprocess("./data/stopwords.txt")
+stemmer = PorterStemmer()
 
 
 def is_match(pattern: list[str], data: list[str]) -> bool:
@@ -45,11 +48,19 @@ def without_stopwords(tokens: list[str]) -> list[str]:
     return ret
 
 
+def stemming(tokens: list[str]) -> list[str]:
+    ret = []
+    for token in tokens:
+        ret.append(stemmer.stem(token))
+    return ret
+
+
 def preprocess_text(s: str) -> list[str]:
     ret = s.lower()
     ret = without_punctuation(ret)
     ret = tokenized(ret)
     ret = without_stopwords(ret)
+    ret = stemming(ret)
     return ret
 
 
